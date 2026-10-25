@@ -28,7 +28,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     && uv pip install --no-cache-dir --system "comfy-cli==1.5.1"
 
 WORKDIR /opt
-RUN git clone --depth 1 --branch "v${COMFYUI_VERSION}" https://github.com/Comfy-Org/ComfyUI.git
+RUN git clone --depth 1 --branch "v${COMFYUI_VERSION}" https://github.com/comfyanonymous/ComfyUI.git
 
 WORKDIR /opt/ComfyUI
 RUN python -c 'import importlib.metadata as m; print("\n".join(f"{p}=={m.version(p)}" for p in ("torch", "torchvision")))' > /opt/pytorch-constraints.txt \
