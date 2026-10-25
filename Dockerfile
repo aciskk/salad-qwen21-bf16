@@ -41,9 +41,9 @@ ENV COMFY_HOME=/opt/ComfyUI \
     OUTPUT_DIR=/opt/ComfyUI/output \
     INPUT_DIR=/opt/ComfyUI/input \
     WORKFLOW_DIR=/workflows \
-    WARMUP_PROMPT_FILE=/opt/qwen21/workflows/qwen21-bf16-api.json \
+    WARMUP_PROMPT_FILE=/opt/qwen21/workflows/qwen21-bf16-warmup-api.json \
     PORT=3000 \
-    STARTUP_CHECK_MAX_TRIES=180 \
+    STARTUP_CHECK_MAX_TRIES=300 \
     CMD="comfy --workspace /opt/ComfyUI launch -- --listen '*'" \
     BASE="" \
     PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
@@ -57,6 +57,7 @@ ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${COMFYUI
 COPY start-qwen21.sh /opt/qwen21/start-qwen21.sh
 COPY model-lock.json /opt/qwen21/model-lock.json
 COPY workflows/qwen21-bf16-api.json /opt/qwen21/workflows/qwen21-bf16-api.json
+COPY workflows/qwen21-bf16-warmup-api.json /opt/qwen21/workflows/qwen21-bf16-warmup-api.json
 
 RUN chmod 0755 /opt/comfyui-api /opt/qwen21/start-qwen21.sh \
     && mkdir -p /opt/ComfyUI/models/diffusion_models /opt/ComfyUI/models/text_encoders /opt/ComfyUI/models/vae /workflows

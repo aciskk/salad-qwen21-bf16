@@ -1,0 +1,5 @@
+saladAPIkey.txt
+.env
+.env.*
+*.part
+*.sha256-ok

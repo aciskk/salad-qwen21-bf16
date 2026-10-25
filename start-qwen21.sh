@@ -17,6 +17,10 @@ download_verified() {
   local partial="${destination}.part"
   local marker="${destination}.sha256-ok"
   local url="${REPO_BASE}/${relative_path}?download=true"
+  local reserve_bytes=5000000000
+  local partial_size=0
+  local remaining_bytes=0
+  local available_bytes=0
 
   mkdir -p "$(dirname "${destination}")"
 
@@ -32,10 +36,30 @@ download_verified() {
     rm -f "${destination}" "${marker}"
   fi
 
-  log "Downloading ${relative_path} (${expected_size} bytes)"
-  curl --location --fail --show-error --silent \
-    --retry 8 --retry-delay 5 --retry-all-errors \
-    --continue-at - --output "${partial}" "${url}"
+  if [[ -f "${partial}" ]]; then
+    partial_size="$(stat -c '%s' "${partial}")"
+    if (( partial_size > expected_size )); then
+      log "Oversized partial file will be discarded: ${relative_path}"
+      rm -f "${partial}"
+      partial_size=0
+    fi
+  fi
+
+  remaining_bytes=$((expected_size - partial_size))
+  available_bytes="$(df -PB1 "${MODEL_ROOT}" | awk 'NR==2 {print $4}')"
+  if (( available_bytes < remaining_bytes + reserve_bytes )); then
+    log "Not enough free disk for ${relative_path}: ${available_bytes} bytes available, $((remaining_bytes + reserve_bytes)) required including reserve"
+    return 1
+  fi
+
+  if (( partial_size < expected_size )); then
+    log "Downloading ${relative_path} (${partial_size}/${expected_size} bytes already present)"
+    curl --location --fail --show-error --silent \
+      --retry 8 --retry-delay 5 --retry-all-errors \
+      --continue-at - --output "${partial}" "${url}"
+  else
+    log "A complete partial file is present; verifying ${relative_path}"
+  fi
 
   if [[ "$(stat -c '%s' "${partial}")" != "${expected_size}" ]]; then
     log "Size mismatch for ${relative_path}; removing partial file"
@@ -43,19 +67,17 @@ download_verified() {
     return 1
   fi
 
-  printf '%s  %s\n' "${expected_sha256}" "${partial}" | sha256sum --check --status
+  if ! printf '%s  %s\n' "${expected_sha256}" "${partial}" | sha256sum --check --status; then
+    log "SHA256 mismatch for ${relative_path}; removing corrupt partial file"
+    rm -f "${partial}" "${marker}"
+    return 1
+  fi
   mv -f "${partial}" "${destination}"
   printf '%s' "${expected_sha256}" > "${marker}"
   log "Verified ${relative_path}"
 }
 
 mkdir -p "${MODEL_ROOT}"
-available_bytes="$(df -PB1 "${MODEL_ROOT}" | awk 'NR==2 {print $4}')"
-required_bytes=36000000000
-if (( available_bytes < required_bytes )); then
-  log "Not enough free disk: ${available_bytes} bytes available, ${required_bytes} required"
-  exit 1
-fi
 
 download_verified \
   "diffusion_models/qwen_image_2.1_bf16.safetensors" \
@@ -74,4 +96,3 @@ download_verified \
 
 log "All BF16 model files are ready; starting ComfyUI API"
 exec /opt/comfyui-api
-
