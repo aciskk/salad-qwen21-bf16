@@ -30,7 +30,7 @@
 1. 建立GitHub Repository。
 2. 將此資料夾內容上傳到Repository根目錄。
 3. Actions會建立`linux/amd64`映像並推送到：
-   `ghcr.io/<GitHub帳號>/salad-qwen21-bf16:comfy0.42.1-qwen2.1-bf16-r2`
+   `ghcr.io/<GitHub帳號>/salad-qwen21-bf16:comfy0.42.1-qwen2.1-bf16-r3`
 4. 第一次完成後把Package設為Public，Salad才能在不保存Registry密碼的情況下拉取。
 
 映像內不含Qwen權重，所以不會超過Salad 35GB壓縮映像限制。模型授權仍是Qwen Research License；測試可以進行，網站商用前須另取得授權。

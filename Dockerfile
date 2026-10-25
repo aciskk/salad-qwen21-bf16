@@ -44,7 +44,7 @@ ENV COMFY_HOME=/opt/ComfyUI \
     WARMUP_PROMPT_FILE=/opt/qwen21/workflows/qwen21-bf16-warmup-api.json \
     PORT=3000 \
     STARTUP_CHECK_MAX_TRIES=300 \
-    CMD="comfy --workspace /opt/ComfyUI launch -- --listen '*'" \
+    CMD="comfy --workspace /opt/ComfyUI launch -- --listen 0.0.0.0" \
     BASE="" \
     PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
