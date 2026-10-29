@@ -8,6 +8,8 @@ ARG COMFYUI_VERSION=0.42.1
 ARG COMFYUI_API_VERSION=1.19.2
 ARG CUDA_VERSION=13.0
 ARG TORCHAUDIO_VERSION=2.11.0
+ARG PHOTO_AESTHETICS_REVISION=a927249f74098c150449ab384ff6ac19137fe029
+ARG ANYTHING2REAL_REVISION=c4ab5473bfdf585fc19cfd1e280f79d2b0c79947
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_PREFER_BINARY=1 \
@@ -56,11 +58,31 @@ ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${COMFYUI
 
 COPY start-qwen21.sh /opt/qwen21/start-qwen21.sh
 COPY model-lock.json /opt/qwen21/model-lock.json
+COPY lora-lock.json /opt/qwen21/lora-lock.json
 COPY workflows/qwen21-bf16-api.json /opt/qwen21/workflows/qwen21-bf16-api.json
 COPY workflows/qwen21-bf16-warmup-api.json /opt/qwen21/workflows/qwen21-bf16-warmup-api.json
 
-RUN chmod 0755 /opt/comfyui-api /opt/qwen21/start-qwen21.sh \
-    && mkdir -p /opt/ComfyUI/models/diffusion_models /opt/ComfyUI/models/text_encoders /opt/ComfyUI/models/vae /workflows
+RUN set -eux \
+    && chmod 0755 /opt/comfyui-api /opt/qwen21/start-qwen21.sh \
+    && mkdir -p /opt/ComfyUI/models/diffusion_models /opt/ComfyUI/models/text_encoders /opt/ComfyUI/models/vae /opt/ComfyUI/models/loras /workflows \
+    && curl --location --fail --show-error --silent --retry 8 --retry-delay 5 --retry-all-errors \
+      --output /opt/ComfyUI/models/loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors.part \
+      "https://huggingface.co/SimpleTuner/Qwen-Image-2.1-LoRA-photo-aesthetics-v2/resolve/${PHOTO_AESTHETICS_REVISION}/pytorch_lora_weights.safetensors?download=true" \
+    && test "$(stat -c '%s' /opt/ComfyUI/models/loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors.part)" = "67142272" \
+    && printf '%s  %s\n' \
+      '7a5f5866911ebb9cdd87a6e647c56389a9e9b014b62d056e3b1dd3bdafabb4b2' \
+      '/opt/ComfyUI/models/loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors.part' | sha256sum --check --status \
+    && mv /opt/ComfyUI/models/loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors.part \
+      /opt/ComfyUI/models/loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors \
+    && curl --location --fail --show-error --silent --retry 8 --retry-delay 5 --retry-all-errors \
+      --output /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors.part \
+      "https://huggingface.co/WarmBloodAban/Qwen-Image-2.1-LoRAs/resolve/${ANYTHING2REAL_REVISION}/Qwen2.1_Anything2RealCharacters.safetensors?download=true" \
+    && test "$(stat -c '%s' /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors.part)" = "318820200" \
+    && printf '%s  %s\n' \
+      '5db4dd2376e6017812bf1189b2fc46e52aaa2c0b7e688faac75e83e1c4dce849' \
+      '/opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors.part' | sha256sum --check --status \
+    && mv /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors.part \
+      /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors
 
 EXPOSE 3000
 

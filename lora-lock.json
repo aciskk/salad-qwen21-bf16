@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "name": "Photo Aesthetics v2",
+      "repository": "SimpleTuner/Qwen-Image-2.1-LoRA-photo-aesthetics-v2",
+      "revision": "a927249f74098c150449ab384ff6ac19137fe029",
+      "source_file": "pytorch_lora_weights.safetensors",
+      "container_path": "loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors",
+      "size_bytes": 67142272,
+      "sha256": "7a5f5866911ebb9cdd87a6e647c56389a9e9b014b62d056e3b1dd3bdafabb4b2"
+    },
+    {
+      "name": "Anything2RealCharacters",
+      "repository": "WarmBloodAban/Qwen-Image-2.1-LoRAs",
+      "revision": "c4ab5473bfdf585fc19cfd1e280f79d2b0c79947",
+      "source_file": "Qwen2.1_Anything2RealCharacters.safetensors",
+      "container_path": "loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors",
+      "size_bytes": 318820200,
+      "sha256": "5db4dd2376e6017812bf1189b2fc46e52aaa2c0b7e688faac75e83e1c4dce849"
+    }
+  ],
+  "total_size_bytes": 385962472
+}

@@ -1,6 +1,6 @@
 # Qwen-Image 2.1 Base BF16 — SaladCloud容器
 
-這個專案只包含ComfyUI、Salad ComfyUI API包裝器、啟動腳本和工作流，不把約32.44GB的模型權重塞進容器映像。
+這個專案包含ComfyUI、Salad ComfyUI API包裝器、啟動腳本、工作流，以及兩個已鎖定並校驗的Qwen LoRA；不把約32.44GB的Qwen主模型權重塞進容器映像。
 
 ## 固定版本
 
@@ -10,6 +10,13 @@
 - Salad ComfyUI API：`1.19.2`
 - Qwen權重來源：`Comfy-Org/Qwen-Image-2.1`
 - Qwen權重Revision：`0217efd1d9c9452e84f6448903d6e21bfa171ffd`
+
+## 映像內建LoRA（r4）
+
+- `Qwen21_PhotoAesthetics_v2_a927249f.safetensors`：67,142,272 bytes，SHA256 `7a5f5866911ebb9cdd87a6e647c56389a9e9b014b62d056e3b1dd3bdafabb4b2`
+- `Qwen21_Anything2RealCharacters_c4ab5473.safetensors`：318,820,200 bytes，SHA256 `5db4dd2376e6017812bf1189b2fc46e52aaa2c0b7e688faac75e83e1c4dce849`
+
+兩個檔案固定在`/opt/ComfyUI/models/loras/`。它們在GitHub Actions建置映像時下載並校驗，容器每次啟動只做本地大小與SHA256核對，不會再從網路下載。預設工作流仍為無LoRA；只有測試工作流明確加入LoRA Loader時才會套用。
 
 模型檔案的大小和SHA256記錄在`model-lock.json`。容器每次分配到新節點時會直接下載到ComfyUI模型目錄，下載完成後必須通過大小與SHA256校驗才會啟動API。中斷下載會續傳；若大小正確但雜湊錯誤，會刪除壞檔後由容器重啟重新下載。
 
@@ -30,7 +37,7 @@
 1. 建立GitHub Repository。
 2. 將此資料夾內容上傳到Repository根目錄。
 3. Actions會建立`linux/amd64`映像並推送到：
-   `ghcr.io/<GitHub帳號>/salad-qwen21-bf16:comfy0.42.1-qwen2.1-bf16-r3`
+   `ghcr.io/<GitHub帳號>/salad-qwen21-bf16:comfy0.42.1-qwen2.1-bf16-r4`
 4. 第一次完成後把Package設為Public，Salad才能在不保存Registry密碼的情況下拉取。
 
 映像內不含Qwen權重，所以不會超過Salad 35GB壓縮映像限制。模型授權仍是Qwen Research License；測試可以進行，網站商用前須另取得授權。

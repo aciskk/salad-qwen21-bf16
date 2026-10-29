@@ -9,6 +9,7 @@ on:
       - Dockerfile
       - start-qwen21.sh
       - model-lock.json
+      - lora-lock.json
       - workflows/**
       - .github/workflows/build-ghcr.yml
 
@@ -43,7 +44,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=comfy0.42.1-qwen2.1-bf16-r3
+            type=raw,value=comfy0.42.1-qwen2.1-bf16-r4
             type=sha
 
       - name: Build and push linux/amd64 image

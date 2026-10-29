@@ -77,7 +77,38 @@ download_verified() {
   log "Verified ${relative_path}"
 }
 
+verify_baked_file() {
+  local relative_path="$1"
+  local expected_size="$2"
+  local expected_sha256="$3"
+  local destination="${MODEL_ROOT}/${relative_path}"
+
+  if [[ ! -f "${destination}" ]]; then
+    log "Required baked file is missing: ${relative_path}"
+    return 1
+  fi
+  if [[ "$(stat -c '%s' "${destination}")" != "${expected_size}" ]]; then
+    log "Size mismatch for baked file: ${relative_path}"
+    return 1
+  fi
+  if ! printf '%s  %s\n' "${expected_sha256}" "${destination}" | sha256sum --check --status; then
+    log "SHA256 mismatch for baked file: ${relative_path}"
+    return 1
+  fi
+  log "Verified baked file: ${relative_path}"
+}
+
 mkdir -p "${MODEL_ROOT}"
+
+verify_baked_file \
+  "loras/Qwen21_PhotoAesthetics_v2_a927249f.safetensors" \
+  "67142272" \
+  "7a5f5866911ebb9cdd87a6e647c56389a9e9b014b62d056e3b1dd3bdafabb4b2"
+
+verify_baked_file \
+  "loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors" \
+  "318820200" \
+  "5db4dd2376e6017812bf1189b2fc46e52aaa2c0b7e688faac75e83e1c4dce849"
 
 download_verified \
   "diffusion_models/qwen_image_2.1_bf16.safetensors" \
