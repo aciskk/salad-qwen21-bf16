@@ -110,6 +110,21 @@ verify_baked_file \
   "318820200" \
   "5db4dd2376e6017812bf1189b2fc46e52aaa2c0b7e688faac75e83e1c4dce849"
 
+verify_baked_file \
+  "loras/Qwen21_TheseAlpacas_NSFW_V2_7c7002be.safetensors" \
+  "79744352" \
+  "83aba822ad8ee10a1e836828f5088259d93bce7b5f3419b46dbc0258c2be46a9"
+
+verify_baked_file \
+  "loras/Qwen21_EasternFemaleAnatomy_v2.1_ecb7288c.safetensors" \
+  "318819912" \
+  "1578418092fd0d82f25478acdc6603d24bd42c52d5098830f884de975dd9f095"
+
+verify_baked_file \
+  "loras/Qwen21_ChatR_UncensoredOmni_v0.1_4c99bdf9.safetensors" \
+  "671151136" \
+  "5991a9845bc5251240febf944f653505a00966515b77073f2c639c4dfcba672a"
+
 download_verified \
   "diffusion_models/qwen_image_2.1_bf16.safetensors" \
   "14230280616" \

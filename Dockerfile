@@ -10,6 +10,9 @@ ARG CUDA_VERSION=13.0
 ARG TORCHAUDIO_VERSION=2.11.0
 ARG PHOTO_AESTHETICS_REVISION=a927249f74098c150449ab384ff6ac19137fe029
 ARG ANYTHING2REAL_REVISION=c4ab5473bfdf585fc19cfd1e280f79d2b0c79947
+ARG THESEALPACAS_REVISION=7c7002be374e75a7b41148ebbae15162c98b2cea
+ARG EASTERN_ANATOMY_REVISION=ecb7288cdc4f606643e20fea149c374ceef83525
+ARG CHATR_OMNI_REVISION=4c99bdf94798f8c6dfb146ac6d2ff65089aaf563
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_PREFER_BINARY=1 \
@@ -82,7 +85,34 @@ RUN set -eux \
       '5db4dd2376e6017812bf1189b2fc46e52aaa2c0b7e688faac75e83e1c4dce849' \
       '/opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors.part' | sha256sum --check --status \
     && mv /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors.part \
-      /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors
+      /opt/ComfyUI/models/loras/Qwen21_Anything2RealCharacters_c4ab5473.safetensors \
+    && curl --location --fail --show-error --silent --retry 8 --retry-delay 5 --retry-all-errors \
+      --output /opt/ComfyUI/models/loras/Qwen21_TheseAlpacas_NSFW_V2_7c7002be.safetensors.part \
+      "https://huggingface.co/Oliver577/NSFW-Qwen-by-TheseAlpacas-V2/resolve/${THESEALPACAS_REVISION}/NSFW%20Qwen%20by%20TheseAlpacas%20V2.safetensors?download=true" \
+    && test "$(stat -c '%s' /opt/ComfyUI/models/loras/Qwen21_TheseAlpacas_NSFW_V2_7c7002be.safetensors.part)" = "79744352" \
+    && printf '%s  %s\n' \
+      '83aba822ad8ee10a1e836828f5088259d93bce7b5f3419b46dbc0258c2be46a9' \
+      '/opt/ComfyUI/models/loras/Qwen21_TheseAlpacas_NSFW_V2_7c7002be.safetensors.part' | sha256sum --check --status \
+    && mv /opt/ComfyUI/models/loras/Qwen21_TheseAlpacas_NSFW_V2_7c7002be.safetensors.part \
+      /opt/ComfyUI/models/loras/Qwen21_TheseAlpacas_NSFW_V2_7c7002be.safetensors \
+    && curl --location --fail --show-error --silent --retry 8 --retry-delay 5 --retry-all-errors \
+      --output /opt/ComfyUI/models/loras/Qwen21_EasternFemaleAnatomy_v2.1_ecb7288c.safetensors.part \
+      "https://huggingface.co/perpetual3x/Eastern-European-Female-Anatomy-NSFW-LoRA-v2/resolve/${EASTERN_ANATOMY_REVISION}/easternfemale_v2.1.safetensors?download=true" \
+    && test "$(stat -c '%s' /opt/ComfyUI/models/loras/Qwen21_EasternFemaleAnatomy_v2.1_ecb7288c.safetensors.part)" = "318819912" \
+    && printf '%s  %s\n' \
+      '1578418092fd0d82f25478acdc6603d24bd42c52d5098830f884de975dd9f095' \
+      '/opt/ComfyUI/models/loras/Qwen21_EasternFemaleAnatomy_v2.1_ecb7288c.safetensors.part' | sha256sum --check --status \
+    && mv /opt/ComfyUI/models/loras/Qwen21_EasternFemaleAnatomy_v2.1_ecb7288c.safetensors.part \
+      /opt/ComfyUI/models/loras/Qwen21_EasternFemaleAnatomy_v2.1_ecb7288c.safetensors \
+    && curl --location --fail --show-error --silent --retry 8 --retry-delay 5 --retry-all-errors \
+      --output /opt/ComfyUI/models/loras/Qwen21_ChatR_UncensoredOmni_v0.1_4c99bdf9.safetensors.part \
+      "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-LoRA-v0.1/resolve/${CHATR_OMNI_REVISION}/chatrlabs-omni-lora-v0.1-bf16.safetensors?download=true" \
+    && test "$(stat -c '%s' /opt/ComfyUI/models/loras/Qwen21_ChatR_UncensoredOmni_v0.1_4c99bdf9.safetensors.part)" = "671151136" \
+    && printf '%s  %s\n' \
+      '5991a9845bc5251240febf944f653505a00966515b77073f2c639c4dfcba672a' \
+      '/opt/ComfyUI/models/loras/Qwen21_ChatR_UncensoredOmni_v0.1_4c99bdf9.safetensors.part' | sha256sum --check --status \
+    && mv /opt/ComfyUI/models/loras/Qwen21_ChatR_UncensoredOmni_v0.1_4c99bdf9.safetensors.part \
+      /opt/ComfyUI/models/loras/Qwen21_ChatR_UncensoredOmni_v0.1_4c99bdf9.safetensors
 
 EXPOSE 3000
 
